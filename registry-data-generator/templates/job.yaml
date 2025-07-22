@@ -16,6 +16,16 @@ spec:
     spec:
       restartPolicy: Never
       containers:
+      - name: docker-daemon
+        image: docker:dind
+        securityContext:
+          privileged: true
+        env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+        volumeMounts:
+        - name: docker-graph-storage
+          mountPath: /var/lib/docker
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -32,8 +42,18 @@ spec:
           value: '{{ .Values.env.numOfThreads }}'
         - name: REGISTRY_URI
           value: '{{ .Values.env.registryUri }}'
+        - name: DOCKER_REGISTRY
+          value: '{{ .Values.env.registryUri }}'
         - name: INSECURE_REGISTRY
           value: '{{ .Values.env.insecureRegistry }}'
+        {{- if .Values.env.dockerUser }}
+        - name: DOCKER_USER
+          value: '{{ .Values.env.dockerUser }}'
+        {{- end }}
+        {{- if .Values.env.dockerPassword }}
+        - name: DOCKER_PASSWORD
+          value: '{{ .Values.env.dockerPassword }}'
+        {{- end }}
         - name: REPO_PATH
           value: '{{ .Values.env.repoPath }}'
         - name: REMOVE_IMAGES
@@ -46,6 +66,9 @@ spec:
 {{ toYaml .Values.resources | indent 10 }}
         securityContext:
           privileged: true
+      volumes:
+      - name: docker-graph-storage
+        emptyDir: {}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

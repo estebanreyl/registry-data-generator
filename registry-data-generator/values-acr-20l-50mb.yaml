@@ -1,0 +1,48 @@
+# Values file for registry scenario: acr-20l-50mb
+# 20 layers, 50MB each, 1000MB total image size
+# 15,728 images for ~15TB total
+
+env:
+  # Number of Docker images to create
+  numberOfImages: 15728
+
+  # Number of layers per image  
+  numberOfLayers: 20
+
+  # Size of each layer (in KB) - 50MB = 51200KB
+  sizeOfLayersKb: '51200'
+
+  # Number of upload threads
+  numOfThreads: 15
+
+  # Registry URI - update with your registry
+  registryUri: your-registry.azurecr-test.io
+
+  # Set --insecure-registry flag
+  insecureRegistry: false
+
+  # Docker user - update with your credentials
+  dockerUser: ""
+
+  # Docker password - update with your credentials  
+  dockerPassword: ""
+
+  # Directory path in the registry
+  repoPath: docker-auto
+
+  # Remove images once done
+  removeImages: false
+
+  # Image tag
+  tag: 1
+
+  # Debug output
+  debug: false
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 2Gi
+  limits:
+    cpu: 4
+    memory: 8Gi
